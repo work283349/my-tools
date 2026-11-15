@@ -3,6 +3,21 @@ import Link from "next/link";
 import { Noto_Serif_TC } from "next/font/google";
 import { OmikujiArt, RibbonArt, ToolboxLogo, WheelArt } from "@/components/tool-art";
 import MobileNav from "@/components/mobile-nav";
+import Parallax from "@/components/parallax";
+import Squiggle from "@/components/squiggle";
+
+/* 首頁的手繪曲線路徑 */
+const SQ = {
+  heroRight:
+    "M640 30 C500 -10 360 50 380 160 C400 270 570 260 545 380 C520 500 300 430 280 560 C265 650 380 720 460 700 C540 680 530 590 470 595 C400 600 390 700 430 800",
+  heroLeft: "M30 -20 C110 80 110 180 50 260 C-10 340 -10 430 60 500 C120 560 100 650 40 720",
+  toolsLeft:
+    "M40 -20 C200 60 260 200 160 300 C60 400 20 520 120 600 C220 680 280 760 200 860 C140 940 60 900 90 840 C120 780 220 860 200 980 C180 1100 40 1180 80 1300 C110 1400 220 1420 260 1520",
+  toolsRight:
+    "M260 -20 C120 80 60 220 160 320 C260 420 280 560 160 640 C60 710 40 820 140 900 C240 980 230 1100 120 1220",
+  loop: "M0 190 C60 160 120 110 140 60 C160 10 120 -10 100 30 C80 70 110 150 170 170 C220 185 250 150 270 120",
+  wave: "M10 220 C10 120 30 40 80 40 C130 40 120 140 170 140 C220 140 210 40 260 40 C320 40 350 120 350 220",
+};
 
 const display = Noto_Serif_TC({
   weight: ["700", "900"],
@@ -111,12 +126,27 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-1">
+      <main className="flex-1 overflow-x-clip">
         {/* ───────── Hero ───────── */}
-        <section className="relative overflow-hidden">
-          {/* 背景點陣 */}
+        <section className="relative isolate overflow-hidden">
+          {/* 手繪曲線：繞過拼貼小卡後方 */}
+          <Squiggle
+            speed={0.18}
+            viewBox="0 0 600 760"
+            d={SQ.heroRight}
+            className="absolute -right-[8vw] top-[440px] -z-10 w-[78vw] max-w-[720px] sm:top-[520px] lg:-top-4 lg:w-[52vw]"
+          />
+          <Squiggle
+            speed={-0.1}
+            viewBox="0 0 120 700"
+            d={SQ.heroLeft}
+            width={22}
+            className="absolute -left-10 top-10 -z-10 hidden w-[110px] xl:block"
+          />
+          {/* 背景點陣（最遠的一層，移動最慢） */}
+          <Parallax speed={0.35} className="pointer-events-none absolute inset-0 -z-20" innerClassName="-mt-40 h-[calc(100%+20rem)]">
           <div
-            className="pointer-events-none absolute inset-0 opacity-60"
+            className="h-full w-full opacity-60"
             style={{
               backgroundImage: `radial-gradient(${LINE} 1.2px, transparent 1.2px)`,
               backgroundSize: "22px 22px",
@@ -124,8 +154,9 @@ export default function Home() {
               WebkitMaskImage: "radial-gradient(ellipse at 70% 40%, black 20%, transparent 70%)",
             }}
           />
+          </Parallax>
           <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-12 sm:pt-16 md:gap-12 md:pb-20 lg:grid-cols-[1.1fr_1fr] lg:pt-24">
-            <div>
+            <Parallax speed={0.12}>
               <p className="mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold tracking-[0.2em]" style={{ borderColor: LINE, color: MUTED }}>
                 <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "#e8345c" }} />
                 LITTLE TOOLBOX · 3 TOOLS
@@ -161,13 +192,14 @@ export default function Home() {
                   先抽個今日運勢 🎋
                 </Link>
               </div>
-            </div>
+            </Parallax>
 
-            {/* 拼貼小卡 */}
+            {/* 拼貼小卡：三張各自不同速度，做出前後景深 */}
             <div className="relative mx-auto h-[420px] w-full max-w-[400px] sm:h-[470px] sm:max-w-[460px]">
+              <Parallax speed={0.06} rotate={-0.6} className="absolute left-0 top-6 w-[52%]">
               <Link
                 href="/lottery"
-                className="absolute left-0 top-6 w-[52%] -rotate-6 rounded-3xl p-5 shadow-[0_20px_40px_-20px_rgba(29,27,25,0.35)] transition duration-300 hover:-translate-y-2 hover:-rotate-3"
+                className="block -rotate-6 rounded-3xl p-5 shadow-[0_20px_40px_-20px_rgba(29,27,25,0.35)] transition duration-300 hover:-translate-y-2 hover:-rotate-3"
                 style={{ backgroundColor: TOOLS[0].bg }}
                 aria-label="抽獎轉盤"
               >
@@ -176,9 +208,11 @@ export default function Home() {
                   LUCKY WHEEL
                 </p>
               </Link>
+              </Parallax>
+              <Parallax speed={0.2} rotate={0.8} className="absolute right-0 top-0 w-[46%]">
               <Link
                 href="/pomodoro"
-                className="absolute right-0 top-0 w-[46%] rotate-6 rounded-3xl p-5 shadow-[0_20px_40px_-20px_rgba(29,27,25,0.35)] transition duration-300 hover:-translate-y-2 hover:rotate-3"
+                className="block rotate-6 rounded-3xl p-5 shadow-[0_20px_40px_-20px_rgba(29,27,25,0.35)] transition duration-300 hover:-translate-y-2 hover:rotate-3"
                 style={{ backgroundColor: TOOLS[1].bg }}
                 aria-label="蕃茄鐘"
               >
@@ -187,9 +221,11 @@ export default function Home() {
                   FOCUS
                 </p>
               </Link>
+              </Parallax>
+              <Parallax speed={-0.12} rotate={-0.5} className="absolute bottom-0 left-[44%] w-[38%]">
               <Link
                 href="/fortune"
-                className="absolute bottom-0 left-[44%] w-[38%] rotate-3 rounded-3xl p-4 shadow-[0_20px_40px_-20px_rgba(29,27,25,0.35)] transition duration-300 hover:-translate-y-2 hover:rotate-0"
+                className="block rotate-3 rounded-3xl p-4 shadow-[0_20px_40px_-20px_rgba(29,27,25,0.35)] transition duration-300 hover:-translate-y-2 hover:rotate-0"
                 style={{ backgroundColor: TOOLS[2].bg }}
                 aria-label="好運抽籤"
               >
@@ -198,6 +234,7 @@ export default function Home() {
                   FORTUNE
                 </p>
               </Link>
+              </Parallax>
             </div>
           </div>
 
@@ -233,7 +270,27 @@ export default function Home() {
         </section>
 
         {/* ───────── 工具介紹 ───────── */}
-        <section id="tools" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:py-24">
+        <section id="tools" className="relative isolate mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:py-24">
+          {/* 手繪曲線：從卡片之間的縫隙與兩側穿出來 */}
+          <Squiggle
+            speed={0.12}
+            viewBox="0 0 300 1500"
+            d={SQ.toolsLeft}
+            className="absolute -left-36 top-24 -z-10 w-[300px] sm:-left-44"
+          />
+          <Squiggle
+            speed={-0.12}
+            viewBox="0 0 280 1200"
+            d={SQ.toolsRight}
+            className="absolute -right-36 top-[38%] -z-10 w-[280px] sm:-right-40"
+          />
+          <Squiggle
+            speed={0.25}
+            viewBox="0 0 280 220"
+            d={SQ.loop}
+            width={20}
+            className="absolute left-[44%] top-6 -z-10 hidden w-[220px] lg:block"
+          />
           <div className="mb-10 flex flex-col justify-between gap-4 sm:mb-14 lg:flex-row lg:items-end">
             <div>
               <p className="text-sm font-semibold tracking-[0.3em]" style={{ color: MUTED }}>
@@ -296,13 +353,17 @@ export default function Home() {
                     className="absolute inset-6 rounded-[24px] opacity-60"
                     style={{ backgroundColor: "rgba(255,255,255,0.45)" }}
                   />
-                  <span
-                    className="pointer-events-none absolute right-8 top-4 text-[120px] font-black leading-none opacity-[0.06]"
-                    style={{ fontFamily: "var(--font-display), serif" }}
-                  >
-                    {t.no}
-                  </span>
-                  <t.Art className="relative h-52 w-auto transition sm:h-64 lg:h-72 duration-500 group-hover:-rotate-3 group-hover:scale-105" />
+                  <Parallax speed={0.15} className="pointer-events-none absolute right-8 top-4">
+                    <span
+                      className="block text-[120px] font-black leading-none opacity-[0.06]"
+                      style={{ fontFamily: "var(--font-display), serif" }}
+                    >
+                      {t.no}
+                    </span>
+                  </Parallax>
+                  <Parallax speed={0.05} className="relative">
+                    <t.Art className="h-52 w-auto transition sm:h-64 lg:h-72 duration-500 group-hover:-rotate-3 group-hover:scale-105" />
+                  </Parallax>
                 </Link>
               </article>
             ))}
@@ -335,14 +396,27 @@ export default function Home() {
             className="relative overflow-hidden rounded-[28px] px-6 py-12 text-center sm:rounded-[32px] sm:px-16 sm:py-16"
             style={{ backgroundColor: "#24215f", color: BG }}
           >
-            <div
-              className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-60"
-              style={{ backgroundImage: "repeating-linear-gradient(-45deg, #e8345c 0 3px, transparent 3px 9px)" }}
+            <Parallax speed={0.18} className="pointer-events-none absolute -right-16 -top-16">
+              <div
+                className="h-56 w-56 rounded-full opacity-60"
+                style={{ backgroundImage: "repeating-linear-gradient(-45deg, #e8345c 0 3px, transparent 3px 9px)" }}
+              />
+            </Parallax>
+            {/* 米白色手繪波浪，從底部畫出來 */}
+            <Squiggle
+              speed={0.15}
+              viewBox="0 0 360 230"
+              d={SQ.wave}
+              color={BG}
+              width={22}
+              className="absolute -bottom-8 right-[4%] hidden w-[200px] opacity-90 lg:block"
             />
-            <div
-              className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full opacity-40"
-              style={{ backgroundImage: "repeating-linear-gradient(45deg, #9aae86 0 3px, transparent 3px 9px)" }}
-            />
+            <Parallax speed={-0.15} className="pointer-events-none absolute -bottom-20 -left-10">
+              <div
+                className="h-56 w-56 rounded-full opacity-40"
+                style={{ backgroundImage: "repeating-linear-gradient(45deg, #9aae86 0 3px, transparent 3px 9px)" }}
+              />
+            </Parallax>
             <h2 className="relative text-3xl font-black sm:text-5xl" style={{ fontFamily: "var(--font-display), serif" }}>
               今天想先用哪一個？
             </h2>
